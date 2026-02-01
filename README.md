@@ -123,6 +123,11 @@ This ensures that the previous installation is completely removed before install
 
 ## Changelog
 
+- **2026-02-01:**
+    - Updated WinBox4 Linux download link extraction logic after MikroTik page change.
+      - Adjusted the parsing command to extract the download URL directly from the `href` attribute.
+      - Improved resilience against changes in the Mikrotik download page structure, including dynamic modal-based markup.
+
 - **2024-09-30:**
     - Updated the command used to fetch the latest WinBox4 Linux download link from the Mikrotik website.
       - Adapted the script to handle changes in the Mikrotik download page HTML structure.
