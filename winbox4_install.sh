@@ -43,7 +43,9 @@ SYMLINK_PATH="/usr/local/bin/winbox"
 DESKTOP_FILE_PATH="/usr/share/applications/winbox4.desktop"
 PREVIOUS_ADDRESSES_PATH="$ORIGINAL_HOME/.winbox/drive_c/users/$ORIGINAL_USER/AppData/Roaming/Mikrotik/Winbox/Addresses.cdb"
 NEW_ADDRESSES_PATH="$ORIGINAL_HOME/.local/share/MikroTik/WinBox/Addresses.cdb"
-NEW_DOWNLOAD_URL=$(wget --https-only -qO- https://mikrotik.com/download/winbox | grep -oP 'href="\Khttps://download\.mikrotik\.com/[^"]*WinBox_Linux\.zip' | head -n 1)
+WINBOX_DOWNLOAD_PAGE="https://mikrotik.com/download/winbox"
+WINBOX_LINK_REGEX='href="\Khttps://download\.mikrotik\.com/[^"]*WinBox_Linux\.zip'
+NEW_DOWNLOAD_URL=$(wget --https-only -qO- "$WINBOX_DOWNLOAD_PAGE" | grep -oP "$WINBOX_LINK_REGEX" | head -n 1)
 # Step 0: Check if download URL is changed
 if [ "$DOWNLOAD_URL" != "$NEW_DOWNLOAD_URL" ]; then
     echo "Download URL has changed from $DOWNLOAD_URL to $NEW_DOWNLOAD_URL. Updating..."

@@ -1,0 +1,23 @@
+name: WinBox Linux download link test
+
+on:
+  schedule:
+    - cron: '17 2 * * *'
+  workflow_dispatch:
+
+jobs:
+  test-download-link:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget grep
+
+      - name: Test download link extraction
+        run: |
+          bash tests/test_download_link.sh
+
