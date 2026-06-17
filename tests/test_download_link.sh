@@ -24,6 +24,8 @@ if [[ -z "$WINBOX_LINK_REGEX" || -z "$WINBOX_DOWNLOAD_PAGE" ]]; then
   exit 1
 fi
 
+echo -e "DEBUG INFO:\n" $(wget --https-only -qO- --header="User-Agent: $USER_AGENT" "$WINBOX_DOWNLOAD_PAGE" | head -n20)
+
 DOWNLOAD_URL=$(
   wget --https-only -qO- --header="User-Agent: $USER_AGENT" "$WINBOX_DOWNLOAD_PAGE" \
   | grep -oP "$WINBOX_LINK_REGEX" \
