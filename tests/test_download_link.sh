@@ -3,6 +3,7 @@
 set -euo pipefail
 
 SCRIPT="winbox4_install.sh"
+readonly USER_AGENT="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
 
 if [[ ! -f "$SCRIPT" ]]; then
   echo "❌ $SCRIPT not found"
@@ -24,7 +25,7 @@ if [[ -z "$WINBOX_LINK_REGEX" || -z "$WINBOX_DOWNLOAD_PAGE" ]]; then
 fi
 
 DOWNLOAD_URL=$(
-  wget --https-only -qO- "$WINBOX_DOWNLOAD_PAGE" \
+  wget --https-only -qO- --header="User-Agent: $USER_AGENT" "$WINBOX_DOWNLOAD_PAGE" \
   | grep -oP "$WINBOX_LINK_REGEX" \
   | head -n 1
 )
