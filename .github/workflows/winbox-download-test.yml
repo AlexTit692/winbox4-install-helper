@@ -19,5 +19,5 @@ jobs:
 
       - name: Test download link extraction
         run: |
-          bash -x tests/test_download_link.sh
+          bash tests/test_download_link.sh
 
