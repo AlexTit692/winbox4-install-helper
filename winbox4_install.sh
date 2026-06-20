@@ -6,7 +6,8 @@
 
 # Function to print error message and exit
 handle_error() {
-    echo "An error occurred during the installation process. Exiting."
+    local error_message="$1"
+    echo "Error: ${error_message:-'An error occurred during the installation process.'}" >&2
     exit 1
 }
 
@@ -36,6 +37,7 @@ else
     ORIGINAL_HOME="$HOME"
 fi
 DOWNLOAD_URL="https://download.mikrotik.com/routeros/winbox/4.0beta4/WinBox_Linux.zip"
+CURRENT_VERSION="WinBox 4.0beta4"
 DOWNLOAD_DIR=$(sudo -u "$ORIGINAL_USER" xdg-user-dir DOWNLOAD)  # Using xdg-user-dir to ensure localization support
 WINBOX_DIR="winbox4"
 WINBOX_INSTALL_DIR="/opt/$WINBOX_DIR"
@@ -46,9 +48,28 @@ NEW_ADDRESSES_PATH="$ORIGINAL_HOME/.local/share/MikroTik/WinBox/Addresses.cdb"
 WINBOX_DOWNLOAD_PAGE="https://mikrotik.com/download/winbox"
 WINBOX_LINK_REGEX='href="\Khttps://download\.mikrotik\.com/[^"]*WinBox_Linux\.zip'
 NEW_DOWNLOAD_URL=$(wget --https-only -qO- "$WINBOX_DOWNLOAD_PAGE" | grep -oP "$WINBOX_LINK_REGEX" | head -n 1)
-# Step 0: Check if download URL is changed
+NEW_VERSION=$(echo "$NEW_DOWNLOAD_URL" | sed -n 's|.*/winbox/\([^/]*\)/.*|WinBox \1|p')
+
+get_current_version() {
+    sudo -u "$ORIGINAL_USER" DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/$(id -u $ORIGINAL_USER)/bus" \
+        "$SYMLINK_PATH" --version 2>/dev/null || handle_error "Unable to get current Winbox version"
+}
+
+# Step 0: Check if WinBox4 is already installed and if the download URL is changed
+if [ -L "$SYMLINK_PATH" ]; then
+    CURRENT_VERSION=$(get_current_version)
+    echo "WinBox4 is already installed. Current version is $CURRENT_VERSION."
+    echo "Available version is $NEW_VERSION."
+    if [ "$CURRENT_VERSION" == "$NEW_VERSION" ]; then
+        echo "No updates available."
+    else
+        echo "To update, run 'sudo ./winbox4_uninstall.sh && sudo ./winbox4_install.sh'."
+    fi
+    exit 0
+fi
+
 if [ "$DOWNLOAD_URL" != "$NEW_DOWNLOAD_URL" ]; then
-    echo "Download URL has changed from $DOWNLOAD_URL to $NEW_DOWNLOAD_URL. Updating..."
+    echo "Download URL has changed. Last version is $NEW_VERSION. Installing..."
     DOWNLOAD_URL="$NEW_DOWNLOAD_URL"
 fi
 
