@@ -79,7 +79,8 @@ sudo -u "$ORIGINAL_USER" wget "$DOWNLOAD_URL" -O WinBox_Linux.zip || exit 1
 
 # Step 2: Unpack archive to 'winbox4'
 echo "Unpacking WinBox4 archive..."
-sudo -u "$ORIGINAL_USER" unzip WinBox_Linux.zip -d "$WINBOX_DIR" || exit 1
+unzip -t WinBox_Linux.zip || handle_error "Downloaded archive is corrupt."
+sudo -u "$ORIGINAL_USER" unzip -o WinBox_Linux.zip -d "$WINBOX_DIR" || exit 1
 
 # Step 3: Move 'winbox4' to /opt/ (skip if already exists)
 if [ -d "$WINBOX_INSTALL_DIR" ]; then
