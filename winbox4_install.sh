@@ -12,7 +12,7 @@ handle_error() {
 }
 
 # Exit on any non-zero command and handle errors
-set -e
+set -euo pipefail
 trap 'handle_error' ERR
 
 # Check if the script is run as root
