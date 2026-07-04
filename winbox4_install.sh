@@ -87,7 +87,9 @@ if [ -d "$WINBOX_INSTALL_DIR" ]; then
     echo "Directory $WINBOX_INSTALL_DIR already exists, skipping move."
 else
     echo "Moving WinBox4 to /opt/..."
-    mv "$WINBOX_DIR" "$WINBOX_INSTALL_DIR" || exit 1
+    mv "$WINBOX_DIR" "$WINBOX_INSTALL_DIR"
+    chown -R root:root "$WINBOX_INSTALL_DIR"
+    chmod -R go-w "$WINBOX_INSTALL_DIR"
 fi
 
 # Step 4: Create symlink to /usr/local/bin (skip if already exists)
