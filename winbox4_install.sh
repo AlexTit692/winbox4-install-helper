@@ -75,7 +75,7 @@ fi
 # Step 1: Download the official archive
 echo "Downloading WinBox4 archive..."
 cd "$DOWNLOAD_DIR" || exit 1
-sudo -u "$ORIGINAL_USER" wget "$DOWNLOAD_URL" -O WinBox_Linux.zip || exit 1
+sudo -u "$ORIGINAL_USER" wget --timeout=30 --tries=3 "$DOWNLOAD_URL" -O WinBox_Linux.zip
 
 # Step 2: Unpack archive to 'winbox4'
 echo "Unpacking WinBox4 archive..."
