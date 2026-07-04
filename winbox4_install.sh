@@ -13,7 +13,7 @@ handle_error() {
 
 # Exit on any non-zero command and handle errors
 set -euo pipefail
-trap 'handle_error' ERR
+trap 'handle_error "Failed at line $LINENO: $BASH_COMMAND"' ERR
 
 # Check if the script is run as root
 if [ "$EUID" -ne 0 ]; then
