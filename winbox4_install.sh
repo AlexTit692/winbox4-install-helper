@@ -21,11 +21,10 @@ if [ "$EUID" -ne 0 ]; then
     exit 1
 fi
 
-# Check if 'unzip' is installed
-if ! command -v unzip &> /dev/null; then
-    echo "'unzip' command could not be found. Please install 'unzip' and try again."
-    exit 1
-fi
+# Check if wget, unzip, xdg-user-dir are installed
+for cmd in wget unzip xdg-user-dir; do
+    command -v "$cmd" &>/dev/null || handle_error "'$cmd' is required but not installed."
+done
 
 # Variables
 # Get the actual user who invoked sudo
