@@ -38,6 +38,7 @@ fi
 DOWNLOAD_URL="https://download.mikrotik.com/routeros/winbox/4.0beta4/WinBox_Linux.zip"
 CURRENT_VERSION="WinBox 4.0beta4"
 DOWNLOAD_DIR=$(sudo -u "$ORIGINAL_USER" xdg-user-dir DOWNLOAD)  # Using xdg-user-dir to ensure localization support
+[ -n "$DOWNLOAD_DIR" ] || DOWNLOAD_DIR="$ORIGINAL_HOME/Downloads"
 WINBOX_DIR="winbox4"
 WINBOX_INSTALL_DIR="/opt/$WINBOX_DIR"
 SYMLINK_PATH="/usr/local/bin/winbox"
@@ -51,7 +52,7 @@ NEW_VERSION=$(echo "$NEW_DOWNLOAD_URL" | sed -n 's|.*/winbox/\([^/]*\)/.*|WinBox
 
 get_current_version() {
     sudo -u "$ORIGINAL_USER" DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/$(id -u $ORIGINAL_USER)/bus" \
-        "$SYMLINK_PATH" --version 2>/dev/null || handle_error "Unable to get current Winbox version"
+        "$SYMLINK_PATH" --version 2>/dev/null || echo "Unknown"
 }
 
 # Step 0: Check if WinBox4 is already installed and if the download URL is changed
@@ -74,13 +75,13 @@ fi
 
 # Step 1: Download the official archive
 echo "Downloading WinBox4 archive..."
-cd "$DOWNLOAD_DIR" || exit 1
+cd "$DOWNLOAD_DIR"
 sudo -u "$ORIGINAL_USER" wget --timeout=30 --tries=3 "$DOWNLOAD_URL" -O WinBox_Linux.zip
 
 # Step 2: Unpack archive to 'winbox4'
 echo "Unpacking WinBox4 archive..."
 unzip -t WinBox_Linux.zip || handle_error "Downloaded archive is corrupt."
-sudo -u "$ORIGINAL_USER" unzip -o WinBox_Linux.zip -d "$WINBOX_DIR" || exit 1
+sudo -u "$ORIGINAL_USER" unzip -o WinBox_Linux.zip -d "$WINBOX_DIR"
 
 # Step 3: Move 'winbox4' to /opt/ (skip if already exists)
 if [ -d "$WINBOX_INSTALL_DIR" ]; then
@@ -97,7 +98,7 @@ if [ -L "$SYMLINK_PATH" ]; then
     echo "Symlink $SYMLINK_PATH already exists, skipping creation."
 else
     echo "Creating symlink for WinBox..."
-    ln -s "$WINBOX_INSTALL_DIR/WinBox" "$SYMLINK_PATH" || exit 1
+    ln -s "$WINBOX_INSTALL_DIR/WinBox" "$SYMLINK_PATH"
 fi
 
 # Step 5: Create desktop file (skip if already exists)
@@ -126,8 +127,8 @@ if [ -f "$PREVIOUS_ADDRESSES_PATH" ]; then
     if [ -f "$NEW_ADDRESSES_PATH" ]; then
         echo "Addresses.cdb already exists at $NEW_ADDRESSES_PATH, skipping migration."
     else
-        sudo -u "$ORIGINAL_USER" mkdir -p "$(dirname "$NEW_ADDRESSES_PATH")" || exit 1
-        sudo -u "$ORIGINAL_USER" cp "$PREVIOUS_ADDRESSES_PATH" "$NEW_ADDRESSES_PATH" || exit 1
+        sudo -u "$ORIGINAL_USER" mkdir -p "$(dirname "$NEW_ADDRESSES_PATH")"
+        sudo -u "$ORIGINAL_USER" cp "$PREVIOUS_ADDRESSES_PATH" "$NEW_ADDRESSES_PATH"
         echo "Addresses.cdb has been successfully migrated to the new installation."
     fi
 else
