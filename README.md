@@ -123,6 +123,31 @@ This ensures that the previous installation is completely removed before install
 
 ## Changelog
 
+- **2026-07-18:**
+    - Added validation of `DOWNLOAD_DIR` fallback.
+    - Improved `get_current_version` to gracefully degrade to "Unknown" on failure.
+    - Removed dead `exit 1` calls after error handling improvements.
+    - Updated GitHub Actions workflow to use `actions/checkout@v6`.
+
+- **2026-07-05:**
+    - Fixed ownership and permissions of files placed in `/opt/winbox4` (`chown -R root:root` + `chmod -R go-w`).
+    - Added timeout and retries to `wget` download (`--timeout=30 --tries=3`).
+    - Added `-o` flag to `unzip` to prevent hangs on re-runs.
+    - Added upfront checks for required commands (`wget`, `unzip`, `xdg-user-dir`).
+    - Improved ERR trap to provide context (`Failed at line $LINENO: $BASH_COMMAND`).
+    - Added `set -o pipefail` for better error handling in pipelines.
+
+- **2026-06-20:**
+    - Implemented WinBox4 version checking and update detection logic.
+      - Added `get_current_version()` using the installed binary's `--version` flag (with proper DBUS session handling).
+      - Compare current vs. latest version from MikroTik download page.
+      - Show appropriate messages and exit early if already up-to-date.
+      - Detect version from download URL path (e.g., `WinBox 4.0beta4`).
+
+- **2026-06-17:**
+    - Added User-Agent header to download requests (in both script and test) for better compatibility.
+    - Minor debug and workflow adjustments (later partially reverted).
+
 - **2026-02-03:**
     - Added automated testing for WinBox4 Linux download link extraction.
       - Introduced a GitHub Actions workflow to verify the download link against the Mikrotik website on a daily schedule.
